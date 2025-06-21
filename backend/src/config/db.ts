@@ -21,9 +21,17 @@ const createTasksTable = async () => {
       title VARCHAR(255) NOT NULL,
       description TEXT,
       status ENUM('TODO', 'IN_PROGRESS', 'DONE') DEFAULT 'TODO',
+      tags JSON NULL,
+      due_date DATE NULL,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
+      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      
+      INDEX idx_status (status),
+      INDEX idx_due_date (due_date),
+      
+      CONSTRAINT chk_title_not_empty CHECK (title <> ''),
+      CONSTRAINT chk_valid_tags CHECK (JSON_VALID(tags) OR tags IS NULL)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `;
 
   try {

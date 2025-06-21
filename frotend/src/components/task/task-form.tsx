@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import type {
   Task,
   CreateTaskDTO,
@@ -28,24 +30,34 @@ export const TaskForm = ({
   initialData,
 }: TaskFormProps) => {
   const toast = useToast();
+  const [tags, setTags] = useState<string[]>(initialData?.tags || []);
+  const [newTag, setNewTag] = useState("");
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && newTag.trim()) {
+      e.preventDefault();
+      if (!tags.includes(newTag.trim())) {
+        setTags([...tags, newTag.trim()]);
+      }
+      setNewTag("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
 
   const handleSubmit = async (formData: FormData) => {
     const taskData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       status: formData.get("status") as TaskStatus,
+      dueDate: formData.get("dueDate") as string,
+      tags: tags,
     };
-
-    console.log(taskData);
 
     try {
       await onSubmit(taskData);
-      toast.success(
-        initialData ? "Tâche modifiée avec succès" : "Tâche créée avec succès",
-        {
-          description: taskData.title,
-        }
-      );
       onCancel();
     } catch {
       toast.error(
@@ -86,23 +98,64 @@ export const TaskForm = ({
           />
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <select
+              name="status"
+              defaultValue={initialData?.status || "TODO"}
+              className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 py-2 px-3 rounded-md text-foreground/90 dark:text-purple-50"
+              required
+            >
+              {STATUS_OPTIONS.map((status) => (
+                <option
+                  key={status.value}
+                  value={status.value}
+                  className="bg-white dark:bg-slate-900"
+                >
+                  {status.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div>
-          <select
-            name="status"
-            defaultValue={initialData?.status || "TODO"}
-            className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 py-2 px-3 rounded-md text-foreground/90 dark:text-purple-50"
+          <Input
+            type="date"
+            name="dueDate"
+            defaultValue={
+              initialData?.dueDate
+                ? new Date(initialData.dueDate).toISOString().split("T")[0]
+                : undefined
+            }
+            className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 backdrop-blur-sm text-foreground/90 dark:text-purple-50"
             required
-          >
-            {STATUS_OPTIONS.map((status) => (
-              <option
-                key={status.value}
-                value={status.value}
-                className="bg-white dark:bg-slate-900"
-              >
-                {status.label}
-              </option>
-            ))}
-          </select>
+          />
+        </div>
+
+        <div>
+          <Input
+            type="text"
+            placeholder="Ajouter un tag (Appuyez sur Entrée)"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            onKeyDown={handleAddTag}
+            className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 backdrop-blur-sm text-foreground/90 dark:text-purple-50 placeholder:text-slate-500 dark:placeholder:text-slate-400"
+          />
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {tags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="outline"
+                  className="bg-white/5 border-white/10 text-foreground/70 dark:border-purple-500/20 dark:text-purple-200 cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 transition-colors"
+                  onClick={() => handleRemoveTag(tag)}
+                >
+                  {tag} ×
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
       </motion.div>
 

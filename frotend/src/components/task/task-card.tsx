@@ -7,11 +7,6 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDeleteTask } from "@/hooks/use-tasks";
 import type { Task } from "@/types/task.types";
 
-export interface TaskPriority {
-  level: "faible" | "moyenne" | "haute" | "critique";
-  color: string;
-}
-
 export interface TaskStatus {
   value: "a-faire" | "en-cours" | "en-revue" | "termine";
   label: string;
@@ -57,7 +52,7 @@ export function TaskCard({ task }: TaskCardProps) {
         transition={{ duration: 0.2 }}
       >
         <Card className="overflow-hidden bg-white/10 dark:bg-slate-900/40 border-white/20 dark:border-purple-500/20 backdrop-blur-lg hover:shadow-xl transition-all duration-300">
-          <div className="">
+          <div>
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-semibold text-foreground/90 dark:text-purple-50">
                 {task.title}
@@ -68,14 +63,35 @@ export function TaskCard({ task }: TaskCardProps) {
                 onEdit={() => {}}
               />
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               {task.description}
             </p>
-            <Badge
-              className={`${statusStyle.bg} ${statusStyle.border} ${statusStyle.text}`}
-            >
-              {statusStyle.label}
-            </Badge>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge
+                className={`${statusStyle.bg} ${statusStyle.border} ${statusStyle.text}`}
+              >
+                {statusStyle.label}
+              </Badge>
+              {task.tags && task.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {task.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="bg-white/5 border-white/10 text-foreground/70 dark:border-purple-500/20 dark:text-purple-200"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {task.dueDate && (
+              <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                Échéance : {new Date(task.dueDate).toLocaleDateString("fr-FR")}
+              </div>
+            )}
           </div>
         </Card>
       </motion.div>
