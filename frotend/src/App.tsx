@@ -52,7 +52,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="min-h-screen relative bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950">
+      <div className="min-h-screen relative">
         <div className="relative">
           <NavBar onCreateTask={() => setIsModalOpen(true)} />
 

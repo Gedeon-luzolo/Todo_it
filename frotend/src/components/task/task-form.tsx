@@ -103,7 +103,7 @@ export const TaskForm = ({
             <select
               name="status"
               defaultValue={initialData?.status || "TODO"}
-              className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 py-2 px-3 rounded-md text-foreground/90 dark:text-purple-50"
+              className="w-full bg-white/50 border dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 py-2 px-3 rounded-md text-foreground/90 dark:text-purple-50 backdrop-blur-sm"
               required
             >
               {STATUS_OPTIONS.map((status) => (
@@ -117,20 +117,19 @@ export const TaskForm = ({
               ))}
             </select>
           </div>
-        </div>
-
-        <div>
-          <Input
-            type="date"
-            name="dueDate"
-            defaultValue={
-              initialData?.dueDate
-                ? new Date(initialData.dueDate).toISOString().split("T")[0]
-                : undefined
-            }
-            className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 backdrop-blur-sm text-foreground/90 dark:text-purple-50"
-            required
-          />
+          <div>
+            <Input
+              type="date"
+              name="dueDate"
+              defaultValue={
+                initialData?.dueDate
+                  ? new Date(initialData.dueDate).toISOString().split("T")[0]
+                  : undefined
+              }
+              className="w-full bg-white/50 dark:bg-slate-900/50 border-white/20 dark:border-purple-500/20 focus:border-indigo-500/50 dark:focus:border-purple-500/50 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-purple-500/20 backdrop-blur-sm text-foreground/90 dark:text-purple-50"
+              required
+            />
+          </div>
         </div>
 
         <div>
